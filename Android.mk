@@ -148,6 +148,10 @@ ifeq ($(shell test $(PLATFORM_SDK_VERSION) -lt 23; echo $$?),0)
     LOCAL_SHARED_LIBRARIES += libstlport
     LOCAL_CFLAGS += -DTW_NO_SHA2_LIBRARY
 endif
+LOCAL_CFLAGS += -DSDK_VERSION=$(PLATFORM_SDK_VERSION)
+ifeq ($(shell test $(PLATFORM_SDK_VERSION) -lt 25; echo $$?),0)
+    LOCAL_CFLAGS += -DUSE_OLD_BASE_INCLUDE
+endif
 ifeq ($(shell test $(PLATFORM_SDK_VERSION) -lt 24; echo $$?),0)
     LOCAL_SHARED_LIBRARIES += libmincrypttwrp
     LOCAL_C_INCLUDES += $(LOCAL_PATH)/libmincrypt/includes
@@ -228,8 +232,6 @@ ifeq ($(TARGET_RECOVERY_TWRP_LIB),)
 else
     LOCAL_STATIC_LIBRARIES += $(TARGET_RECOVERY_TWRP_LIB)
 endif
-
-LOCAL_C_INCLUDES += system/extras/ext4_utils
 
 tw_git_revision := $(shell git -C $(LOCAL_PATH) rev-parse --short=8 HEAD 2>/dev/null)
 ifeq ($(shell git -C $(LOCAL_PATH) diff --quiet; echo $$?),1)
